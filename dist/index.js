@@ -42,7 +42,12 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ms = core.getInput('milliseconds');
-            console.log(`${github.context.action}`);
+            console.log(`github.context.payload.action: ${github.context.payload.action}`);
+            console.log(`github.context.apiUrl: ${github.context.apiUrl}`);
+            console.log(`github.context.ref: ${github.context.ref}`);
+            console.log(`github.context.job: ${github.context.job}`);
+            console.log(`github.context.workflow: ${github.context.workflow}`);
+            console.log(github.context);
             core.debug(`Waiting ${ms} milliseconds ok alright ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
             core.debug(new Date().toTimeString());
             yield (0, wait_1.wait)(parseInt(ms, 10));
