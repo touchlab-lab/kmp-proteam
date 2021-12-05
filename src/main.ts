@@ -1,9 +1,39 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import {wait} from './wait'
+import {registerbuild} from './registerbuild'
 
 async function run(): Promise<void> {
-  try {
+    try {
+        const operation: string = core.getInput("operation")
+        switch (operation) {
+            case "registerbuild": {
+                await registerbuildOperation()
+                break
+            }
+            default: {
+                await defaultOperation()
+                break
+            }
+        }
+
+    } catch (error) {
+        if (error instanceof Error) core.setFailed(error.message)
+    }
+}
+
+async function registerbuildOperation() {
+    const ms: string = core.getInput('milliseconds')
+    core.debug(`Waiting ${ms} milliseconds ok alright ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+
+    core.debug(new Date().toTimeString())
+    await registerbuild(parseInt(ms, 10))
+    core.debug(new Date().toTimeString())
+
+    core.setOutput('time', new Date().toTimeString())
+}
+
+async function defaultOperation() {
     const ms: string = core.getInput('milliseconds')
     console.log(`github.context.payload.action: ${github.context.payload.action}`)
     console.log(`github.context.apiUrl: ${github.context.apiUrl}`)
@@ -18,9 +48,6 @@ async function run(): Promise<void> {
     core.debug(new Date().toTimeString())
 
     core.setOutput('time', new Date().toTimeString())
-  } catch (error) {
-    if (error instanceof Error) core.setFailed(error.message)
-  }
 }
 
 run()
