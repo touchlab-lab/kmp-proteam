@@ -118,6 +118,9 @@ function registerbuild(milliseconds) {
             fs_1.promises.readdir(".").then((files) => {
                 files.forEach(s => console.log(`file: ${s}`));
             });
+            fs_1.promises.readFile("Package.swift", "utf8").then((fileData) => {
+                fileData.split("\n").forEach(str => console.log(`astr: ${str}`));
+            });
             setTimeout(() => resolve('done!'), milliseconds);
         });
     });

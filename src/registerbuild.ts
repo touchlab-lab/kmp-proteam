@@ -11,6 +11,10 @@ export async function registerbuild(milliseconds: number): Promise<string> {
       files.forEach(s => console.log(`file: ${s}`))
     })
 
+    fs.readFile("Package.swift", "utf8").then((fileData) => {
+      fileData.split("\n").forEach(str => console.log(`astr: ${str}`))
+    })
+
     setTimeout(() => resolve('done!'), milliseconds)
   })
 }
