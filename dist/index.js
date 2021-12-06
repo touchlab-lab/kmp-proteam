@@ -92,7 +92,7 @@ run();
 /***/ }),
 
 /***/ 1934:
-/***/ (function(__unused_webpack_module, exports) {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
@@ -107,13 +107,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.registerbuild = void 0;
+const fs_1 = __nccwpck_require__(5747);
 function registerbuild(milliseconds) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise(resolve => {
             if (isNaN(milliseconds)) {
                 throw new Error('milliseconds not a number');
             }
-            console.log("in register build");
+            console.log("go load files");
+            fs_1.promises.readdir(".").then((files) => {
+                files.forEach(s => console.log(`file: ${s}`));
+            });
             setTimeout(() => resolve('done!'), milliseconds);
         });
     });
