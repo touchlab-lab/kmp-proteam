@@ -114,18 +114,29 @@ function registerbuild(milliseconds) {
             if (isNaN(milliseconds)) {
                 throw new Error('milliseconds not a number');
             }
-            console.log("go load files");
-            fs_1.promises.readdir(".").then((files) => {
-                files.forEach(s => console.log(`file: ${s}`));
-            });
-            fs_1.promises.readFile("Package.swift", "utf8").then((fileData) => {
-                fileData.split("\n").forEach(str => console.log(`astr: ${str}`));
-            });
-            setTimeout(() => resolve('done!'), milliseconds);
+            console.log("call transformPackageFile async");
+            transformPackageFile().then(() => resolve('done!'));
         });
     });
 }
 exports.registerbuild = registerbuild;
+function transformPackageFile() {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log("transformPackageFile start");
+        const fileData = yield fs_1.promises.readFile("Package.swift", "utf8");
+        let tempFileName = `Package.swift.${Date.now()}`;
+        console.log(`transformPackageFile tempFileName ${tempFileName}`);
+        yield fs_1.promises.writeFile(tempFileName, fileData);
+        try {
+            yield fs_1.promises.unlink("Package.swift.old");
+        }
+        catch (err) {
+        }
+        yield fs_1.promises.rename("Package.swift", "Package.swift.old");
+        yield fs_1.promises.rename(tempFileName, "Package.swift");
+        console.log("transformPackageFile end");
+    });
+}
 
 
 /***/ }),

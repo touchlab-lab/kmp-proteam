@@ -6,14 +6,16 @@ export async function registerbuild(milliseconds: number): Promise<string> {
     if (isNaN(milliseconds)) {
       throw new Error('milliseconds not a number')
     }
-    console.log("call async")
+    console.log("call transformPackageFile async")
     transformPackageFile().then(() => resolve('done!'))
   })
 }
 
 async function transformPackageFile(){
+  console.log("transformPackageFile start")
   const fileData = await fs.readFile("Package.swift", "utf8")
   let tempFileName = `Package.swift.${Date.now()}`;
+  console.log(`transformPackageFile tempFileName ${tempFileName}`)
   await fs.writeFile(tempFileName, fileData)
 
   try {
@@ -23,4 +25,5 @@ async function transformPackageFile(){
 
   await fs.rename("Package.swift", "Package.swift.old")
   await fs.rename(tempFileName, "Package.swift")
+  console.log("transformPackageFile end")
 }
