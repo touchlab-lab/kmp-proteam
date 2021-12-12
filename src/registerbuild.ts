@@ -6,15 +6,21 @@ export async function registerbuild(milliseconds: number): Promise<string> {
     if (isNaN(milliseconds)) {
       throw new Error('milliseconds not a number')
     }
-    console.log("go load files")
-    fs.readdir(".").then((files)=>{
-      files.forEach(s => console.log(`file: ${s}`))
-    })
-
-    fs.readFile("Package.swift", "utf8").then((fileData) => {
-      fileData.split("\n").forEach(str => console.log(`astr: ${str}`))
-    })
-
-    setTimeout(() => resolve('done!'), milliseconds)
+    console.log("call async")
+    transformPackageFile().then(() => resolve('done!'))
   })
+}
+
+async function transformPackageFile(){
+  const fileData = await fs.readFile("Package.swift", "utf8")
+  let tempFileName = `Package.swift.${Date.now()}`;
+  await fs.writeFile(tempFileName, fileData)
+
+  try {
+    await fs.unlink("Package.swift.old")
+  } catch(err) {
+  }
+
+  await fs.rename("Package.swift", "Package.swift.old")
+  await fs.rename(tempFileName, "Package.swift")
 }
