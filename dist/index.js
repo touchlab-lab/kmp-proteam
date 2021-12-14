@@ -48,6 +48,10 @@ function run() {
                     yield registerbuildOperation();
                     break;
                 }
+                case "fixprbase": {
+                    yield fixPrBase();
+                    break;
+                }
                 default: {
                     yield defaultOperation();
                     break;
@@ -68,6 +72,30 @@ function registerbuildOperation() {
         yield (0, registerbuild_1.registerbuild)(parseInt(ms, 10));
         core.debug(new Date().toTimeString());
         core.setOutput('time', new Date().toTimeString());
+    });
+}
+const parsePullRequestId = (githubRef) => {
+    const result = /refs\/pull\/(\d+)\/merge/g.exec(githubRef);
+    if (!result)
+        throw new Error("Reference not found.");
+    const [, pullRequestId] = result;
+    return pullRequestId;
+};
+function fixPrBase() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const githubToken = core.getInput("githubToken");
+        const octokit = github.getOctokit(githubToken);
+        github.context.repo.owner;
+        core.info(`github.context.ref: ${github.context.ref}`);
+        const pullRequestId = parsePullRequestId(github.context.ref);
+        core.info(`pullRequestId: ${pullRequestId}`);
+        const { data: pullRequest } = yield octokit.rest.pulls.get({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            pull_number: parseInt(pullRequestId),
+        });
+        core.info("OK what's the base?");
+        core.info(pullRequest.base.ref);
     });
 }
 function defaultOperation() {

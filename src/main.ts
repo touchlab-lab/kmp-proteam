@@ -58,11 +58,13 @@ async function fixPrBase(){
         pull_number: parseInt(pullRequestId),
     });
 
-    core.info(pullRequest);
+    core.info("OK what's the base?")
+    core.info(pullRequest.base.ref);
 }
 
 async function defaultOperation() {
-    const ms: string = core.getInput('milliseconds')
+    throw "No wrong!"
+    /*const ms: string = core.getInput('milliseconds')
     console.log(`github.context.payload.action: ${github.context.payload.action}`)
     console.log(`github.context.apiUrl: ${github.context.apiUrl}`)
     console.log(`github.context.ref: ${github.context.ref}`)
@@ -75,7 +77,7 @@ async function defaultOperation() {
     await wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('time', new Date().toTimeString())*/
 }
 
 run()
