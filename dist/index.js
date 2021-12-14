@@ -37,7 +37,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-const wait_1 = __nccwpck_require__(5817);
 const registerbuild_1 = __nccwpck_require__(1934);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,32 +85,40 @@ function fixPrBase() {
         const githubToken = core.getInput("githubToken");
         const octokit = github.getOctokit(githubToken);
         github.context.repo.owner;
-        core.info(`github.context.ref: ${github.context.ref}`);
         const pullRequestId = parsePullRequestId(github.context.ref);
-        core.info(`pullRequestId: ${pullRequestId}`);
         const { data: pullRequest } = yield octokit.rest.pulls.get({
             owner: github.context.repo.owner,
             repo: github.context.repo.repo,
             pull_number: parseInt(pullRequestId),
         });
-        core.info("OK what's the base?");
-        core.info(pullRequest.base.ref);
+        if (pullRequest.base.ref == "main") {
+            core.info("Move base to develop");
+            octokit.rest.pulls.update({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                pull_number: parseInt(pullRequestId),
+                base: "develop"
+            });
+        }
     });
 }
 function defaultOperation() {
     return __awaiter(this, void 0, void 0, function* () {
-        const ms = core.getInput('milliseconds');
-        console.log(`github.context.payload.action: ${github.context.payload.action}`);
-        console.log(`github.context.apiUrl: ${github.context.apiUrl}`);
-        console.log(`github.context.ref: ${github.context.ref}`);
-        console.log(`github.context.job: ${github.context.job}`);
-        console.log(`github.context.workflow: ${github.context.workflow}`);
-        console.log(github.context);
-        core.debug(`Waiting ${ms} milliseconds ok alright ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-        core.debug(new Date().toTimeString());
-        yield (0, wait_1.wait)(parseInt(ms, 10));
-        core.debug(new Date().toTimeString());
-        core.setOutput('time', new Date().toTimeString());
+        throw "No wrong!";
+        /*const ms: string = core.getInput('milliseconds')
+        console.log(`github.context.payload.action: ${github.context.payload.action}`)
+        console.log(`github.context.apiUrl: ${github.context.apiUrl}`)
+        console.log(`github.context.ref: ${github.context.ref}`)
+        console.log(`github.context.job: ${github.context.job}`)
+        console.log(`github.context.workflow: ${github.context.workflow}`)
+        console.log(github.context)
+        core.debug(`Waiting ${ms} milliseconds ok alright ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    
+        core.debug(new Date().toTimeString())
+        await wait(parseInt(ms, 10))
+        core.debug(new Date().toTimeString())
+    
+        core.setOutput('time', new Date().toTimeString())*/
     });
 }
 run();
@@ -165,37 +172,6 @@ function transformPackageFile() {
         console.log("transformPackageFile end");
     });
 }
-
-
-/***/ }),
-
-/***/ 5817:
-/***/ (function(__unused_webpack_module, exports) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.wait = void 0;
-function wait(milliseconds) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return new Promise(resolve => {
-            if (isNaN(milliseconds)) {
-                throw new Error('milliseconds not a number');
-            }
-            setTimeout(() => resolve('done!'), milliseconds);
-        });
-    });
-}
-exports.wait = wait;
 
 
 /***/ }),
