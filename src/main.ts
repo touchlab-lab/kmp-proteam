@@ -56,6 +56,8 @@ async function fixPrBase(){
         pull_number: parseInt(pullRequestId),
     });
 
+    core.info(`pullRequest.base.ref: ${pullRequest.base.ref}`)
+
     if(pullRequest.base.ref == "main") {
         core.info("Move base to develop")
         octokit.rest.pulls.update({
