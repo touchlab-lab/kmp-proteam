@@ -11,6 +11,10 @@ async function run(): Promise<void> {
                 await registerbuildOperation()
                 break
             }
+            case "fixprbase": {
+                await fixPrBase()
+                break
+            }
             default: {
                 await defaultOperation()
                 break
@@ -31,6 +35,30 @@ async function registerbuildOperation() {
     core.debug(new Date().toTimeString())
 
     core.setOutput('time', new Date().toTimeString())
+}
+
+const parsePullRequestId = (githubRef:string) => {
+    const result = /refs\/pull\/(\d+)\/merge/g.exec(githubRef);
+    if (!result) throw new Error("Reference not found.");
+    const [, pullRequestId] = result;
+    return pullRequestId;
+};
+
+async function fixPrBase(){
+    const githubToken = core.getInput("githubToken")
+    const octokit = github.getOctokit(githubToken)
+    github.context.repo.owner
+    console.log(`github.context.ref: ${github.context.ref}`)
+    const pullRequestId = parsePullRequestId(github.context.ref);
+    console.log(`pullRequestId: ${pullRequestId}`)
+
+    const { data: pullRequest } = await octokit.rest.pulls.get({
+        owner: github.context.repo.owner,
+        repo: github.context.repo.repo,
+        pull_number: parseInt(pullRequestId),
+    });
+
+    console.log(pullRequest);
 }
 
 async function defaultOperation() {
