@@ -48,9 +48,9 @@ async function fixPrBase(){
     const githubToken = core.getInput("githubToken")
     const octokit = github.getOctokit(githubToken)
     github.context.repo.owner
-    console.log(`github.context.ref: ${github.context.ref}`)
+    core.info(`github.context.ref: ${github.context.ref}`)
     const pullRequestId = parsePullRequestId(github.context.ref);
-    console.log(`pullRequestId: ${pullRequestId}`)
+    core.info(`pullRequestId: ${pullRequestId}`)
 
     const { data: pullRequest } = await octokit.rest.pulls.get({
         owner: github.context.repo.owner,
@@ -58,7 +58,7 @@ async function fixPrBase(){
         pull_number: parseInt(pullRequestId),
     });
 
-    console.log(pullRequest);
+    core.info(pullRequest);
 }
 
 async function defaultOperation() {
