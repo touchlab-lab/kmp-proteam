@@ -48,18 +48,23 @@ async function fixPrBase(){
     const githubToken = core.getInput("githubToken")
     const octokit = github.getOctokit(githubToken)
     github.context.repo.owner
-    core.info(`github.context.ref: ${github.context.ref}`)
-    const pullRequestId = parsePullRequestId(github.context.ref);
-    core.info(`pullRequestId: ${pullRequestId}`)
 
+    const pullRequestId = parsePullRequestId(github.context.ref);
     const { data: pullRequest } = await octokit.rest.pulls.get({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         pull_number: parseInt(pullRequestId),
     });
 
-    core.info("OK what's the base?")
-    core.info(pullRequest.base.ref);
+    if(pullRequest.base.ref == "main") {
+        core.info("Move base to develop")
+        octokit.rest.pulls.update({
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            pull_number: parseInt(pullRequestId),
+            base: "develop"
+        })
+    }
 }
 
 async function defaultOperation() {
